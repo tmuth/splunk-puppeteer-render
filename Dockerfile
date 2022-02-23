@@ -20,4 +20,5 @@ RUN apt-get install -yq --ignore-missing \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget vim
 
 USER pptr
+RUN npm install express
 RUN mkdir /app/shared
