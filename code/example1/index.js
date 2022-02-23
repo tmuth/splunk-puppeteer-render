@@ -23,7 +23,7 @@ router.get("/generate-pdf", async (req, res) => {
 
 // Download Image Route
 router.get("/render-dashboard", async (req, res) => {
-  let result = await renderDashboard(req.query.url,req.query.width,req.query.height);
+  let result = await renderDashboard(req.query.name,req.query.width,req.query.height);
   //res.attachment(`node-express-puppeteer-pdf-example.pdf`);
   //res.contentType("application/pdf");
   res.writeHead(200, {'Content-Type': 'image/jpeg'});

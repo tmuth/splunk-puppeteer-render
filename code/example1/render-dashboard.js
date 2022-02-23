@@ -1,47 +1,51 @@
 const puppeteer = require("puppeteer");
-const minimal_args = [
-    '--autoplay-policy=user-gesture-required',
-    '--disable-background-networking',
-    '--disable-background-timer-throttling',
-    '--disable-backgrounding-occluded-windows',
-    '--disable-breakpad',
-    '--disable-client-side-phishing-detection',
-    '--disable-component-update',
-    '--disable-default-apps',
-    '--disable-dev-shm-usage',
-    '--disable-domain-reliability',
-    '--disable-extensions',
-    '--disable-features=AudioServiceOutOfProcess',
-    '--disable-hang-monitor',
-    '--disable-ipc-flooding-protection',
-    '--disable-notifications',
-    '--disable-offer-store-unmasked-wallet-cards',
-    '--disable-popup-blocking',
-    '--disable-print-preview',
-    '--disable-prompt-on-repost',
-    '--disable-renderer-backgrounding',
-    '--disable-setuid-sandbox',
-    '--disable-speech-api',
-    '--disable-sync',
-    '--hide-scrollbars',
-    '--ignore-gpu-blacklist',
-    '--metrics-recording-only',
-    '--mute-audio',
-    '--no-default-browser-check',
-    '--no-first-run',
-    '--no-pings',
-    '--no-sandbox',
-    '--no-zygote',
-    '--password-store=basic',
-    '--use-gl=swiftshader',
-    '--use-mock-keychain',
-  ];
+const fs = require('fs');
 
-const renderDashboard = async (url,width = 1280,height = 800) => {
+
+const findDashboardByName = (dashboardsIn, nameIn) => {
+  const key = Object.keys(dashboardsIn).find(dashboard => dashboardsIn[dashboard].name === nameIn)
+  return dashboardsIn[key]
+}
+/*
+const findStudentByName = (studentsIn, nameIn) => {
+    const key = Object.keys(studentsIn).find(student => studentsIn[student].name === nameIn)
+    return studentsIn[key]
+  }
+*/
+
+
+
+/*
+fs.readFile('student2.json', (err, data) => {
+  if (err) throw err;
+  let students = JSON.parse(data);
+  console.log(students);
+  console.log(findStudentByName(students,'Dave'));
+
+  let theStudent = findStudentByName(students,'Dave');
+  console.log('Car: '+theStudent.car)
+});
+*/
+
+const renderDashboard = async (name,width = 1280,height = 800) => {
   // Browser actions & buffer creator
+
+  var dashboardDetails = {}
+
+  fs.readFile('url-map.json', (err, data) => {
+      if (err) throw err;
+      let dashboards = JSON.parse(data);
+      //console.log(dashboards);
+      //console.log(findDashboardByName(dashboards,name));
+
+      //let theDashboard = findDashboardByName(dashboards,name);
+      dashboardDetails = findDashboardByName(dashboards,name)
+      //console.log('URL: '+dashboardDetails.url)
+  });
   
   const browser = await puppeteer.launch({ 
     headless: true
+    //slowMo: 1500
     //userDataDir: './cache',
     //args: minimal_args
     //args: ["--no-sandbox", "--disable-setuid-sandbox"], // SEE BELOW WARNING!!!
@@ -56,21 +60,26 @@ const renderDashboard = async (url,width = 1280,height = 800) => {
 
 
   const page = await browser.newPage();
-  console.log(parseInt(height))
+  //console.log(parseInt(height))
   await page.setViewport({ width: parseInt(width), height: parseInt(height) })
-  await page.goto(url2);
+  await page.goto(dashboardDetails.url,{waitUntil: "networkidle2"});
   //await page.waitForNavigation({waitUntil: 'networkidle2'});
-  await page.type('#username', 'admin');
-  await page.type('#password', 'welcome1');
+  await page.type('#username', dashboardDetails.username);
+  await page.type('#password', dashboardDetails.password);
   await page.click('input[type="submit"]');
 
   //await page.waitForSelector('body > div.main-section-body.dashboard-body');          // Method to ensure that the element is loaded
   //const dashboardBody = await page.$('body > div.main-section-body.dashboard-body'); 
    
   //await page.waitForNavigation({waitUntil: 'networkidle2'});
+  
+  
   await page.waitForSelector('rect.highcharts-plot-background',{visible: true});   
-  //await new Promise(r => setTimeout(() => r(), 2000));
+  //page.$$('#zero_click_wrapper img[src^="//external-content"]')
+  //await new Promise(r => setTimeout(() => r(), 8000));
   const dashboard = await page.$('body > div.main-section-body.dashboard-body'); 
+  //const dashboard = await page.$('div[data-test="fullscreen-layout"]'); 
+  //const dashboard = page;
   //await logo.screenshot({});
   //const pdf = await logo.pdf();
 
@@ -79,6 +88,7 @@ const renderDashboard = async (url,width = 1280,height = 800) => {
   await browser.close();
   // Return Buffer
   //return pdf;
+  console.log("Render done");
   return img;
 };
 

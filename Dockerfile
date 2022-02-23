@@ -19,6 +19,9 @@ RUN apt-get install -yq --ignore-missing \
     libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates \
     fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget vim
 
+ARG CACHE_BUST
+
 USER pptr
 RUN npm install express
 RUN mkdir /app/shared
+RUN mkdir /app/code
