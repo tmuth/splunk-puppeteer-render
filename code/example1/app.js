@@ -1,7 +1,9 @@
 const express = require("express");
 const path = require("path");
-//const cookieParser = require("cookie-parser");
-//const logger = require("morgan");
+const logLevel = 'info'; // error | warn | info | debug https://github.com/winstonjs/winston#using-logging-levels
+const logger = require('./utils/logger');
+
+
 const port = 8888
 const indexRouter = require("./index.js");
 
@@ -18,5 +20,6 @@ app.use("/", indexRouter);
 module.exports = app;
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    //console.log(`Express app listening on port ${port}`)
+    logger.info(`Express app listening on port ${port}`);
   })

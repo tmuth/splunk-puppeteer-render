@@ -22,6 +22,6 @@ RUN apt-get install -yq --ignore-missing \
 ARG CACHE_BUST
 
 USER pptr
-RUN npm install express
+RUN npm install express winston pm2
 RUN mkdir /app/shared
 RUN mkdir /app/code

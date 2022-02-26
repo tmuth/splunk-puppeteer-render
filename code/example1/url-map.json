@@ -1,4 +1,4 @@
 [
-{"name": "metrics2", "url": "http://192.168.5.2:8000/en-US/app/search/internal_metrics_2", "username": "report1","password": "welcome1" },
-{"name": "internal-metrics", "url": "http://192.168.5.2:8000/en-US/app/search/internal_metrics?form.global_time.earliest=-24h%40h&form.global_time.latest=now", "username": "report1","password": "welcome1" }
+{"name": "metrics2", "url": "http://192.168.5.2:8000/en-US/app/search/internal_metrics_2", "username": "report1" },
+{"name": "internal-metrics", "url": "http://192.168.5.2:8000/en-US/app/search/internal_metrics?form.global_time.earliest=-24h%40h&form.global_time.latest=now", "username": "report1" }
 ]
