@@ -1,5 +1,5 @@
 const { createLogger, format, transports } = require('winston');
-const logLevel = 'info'; // error | warn | info | debug https://github.com/winstonjs/winston#using-logging-levels
+const logLevel = 'error'; // error | warn | info | debug https://github.com/winstonjs/winston#using-logging-levels
 module.exports = createLogger({
     transports: [
         new transports.File({

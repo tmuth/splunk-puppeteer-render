@@ -32,6 +32,34 @@ const readUrlMap = async (dashNameIn) => {
   return dashDetails;
 }
 
+const getTraditionalDashboard = async (page) => {
+  logger.info("getTraditionalDashboard...");
+  await page.waitForSelector('div.highcharts-container');
+  //await page.waitForSelector('#dashboard1'); 
+  await page.waitForFunction('document.querySelector("div.alert-info") === null');
+  
+  //await page.waitForNavigation({waitUntil: 'networkidle0'});
+  //await new Promise(r => setTimeout(() => r(), 4000));
+ 
+  // This section waits for each dashpanel to finish loading
+  let visiblePanels = await page.$$('div.progress-animation:not([style*="display: none;"])');
+  //logger.info(visiblePanels.length);
+  while(visiblePanels.length > 0  )
+  {
+    logger.info("Waiting in loop...");
+    logger.info(visiblePanels.length);
+    //logger.info(util.inspect(visiblePanels, false, null, true /* enable colors */));
+    await delay(500);
+    visiblePanels = await page.$$("div.progress-animation:not([style*='display: none;'])");
+  }
+
+  const dashboard = await page.$('body > div.main-section-body.dashboard-body'); 
+  return dashboard;
+}
+
+const getStudioDashboard = async (page) => {
+
+}
 
 const renderDashboard = async (name,width = 1280,height = 800) => {
 
@@ -60,41 +88,18 @@ const renderDashboard = async (name,width = 1280,height = 800) => {
   await page.type('#password', splunkPassword);
   await page.click('input[type="submit"]');
   
-  await page.waitForSelector('div.highcharts-container');
-  //await page.waitForSelector('#dashboard1'); 
-  await page.waitForFunction('document.querySelector("div.alert-info") === null');
-  
-  //await page.waitForFunction("document.querySelector('div.progress-animation') && document.querySelector('div.progress-animation').style.display == 'none'");
-  //await page.waitForSelector('div.progress-animation', {visible: false})
-  //await page.waitForNavigation({waitUntil: 'networkidle0'});
-  //await new Promise(r => setTimeout(() => r(), 4000));
- 
-
-  
-  // This section waits for each dashpanel to finish loading
-  let visiblePanels = await page.$$('div.progress-animation:not([style*="display: none;"])');
-  //logger.info(visiblePanels.length);
-  while(visiblePanels.length > 0  )
-  {
-    //logger.info("Waiting in loop...");
-    //logger.info(visiblePanels.length);
-    //logger.info(util.inspect(visiblePanels, false, null, true /* enable colors */));
-    await delay(500);
-    visiblePanels = await page.$$("div.progress-animation:not([style*='display: none;'])");
-  }
-
-  const dashboard = await page.$('body > div.main-section-body.dashboard-body'); 
-
+  var dashboard = {};
+  if((dashboardDetails.style === undefined) || (dashboardDetails.style === 'traditional')){
+    await logger.info("Traditional Style Dashboard");
+    dashboard = await getTraditionalDashboard(page);
+  } 
   /*
-  var HTML = await page.content()
-  const fs = require('fs');
-  var ws = fs.createWriteStream(
-    'test2.html'
-  );
-  ws.write(HTML);
-  ws.end();
+  else{
+    logger.info("Dashboard Studio Style Dashboard");
+    const dashboard = await getTraditionalDashboard(page);
+  }
   */
-
+  
   const img = await dashboard.screenshot({type: 'jpeg'});
   await browser.close();
   //logger.info("Render done");

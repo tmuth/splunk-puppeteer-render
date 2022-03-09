@@ -3,7 +3,7 @@ const getCredentials = async (nameIn) => {
     eval('var username="SPASS_'  + nameIn.toUpperCase() + '";');
     //console.log(username);
     var password=eval('process.env.'+username)
-    //console.log('Passs: '+ password);
+    //console.log('Passs: '+ password); 
     if(password === undefined){
         throw (`No value for environment variable ${username}`);
     }
